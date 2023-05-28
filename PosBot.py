@@ -37,7 +37,6 @@ async def repeat(ctx, times: int, content='repeating...'):
     for i in range(times):
         await ctx.send(content)
 
-
 @bot.command()
 async def joined(ctx, member: discord.Member):
     """Amazing!"""
@@ -48,7 +47,11 @@ async def hello(ctx):
     await ctx.send(f'Привет! Я бот {bot.user}!')
 
 @bot.command()
+async def helpme(ctx):
+    await ctx.send("```$test - повторение сообщения написаного после      $add - складывание двух чисел                      $repeat x y - повторение сообщения y x раз                     $heh x - повторение heh x раз                           $hello - поздороваться с ботом```")
+
+@bot.command()
 async def heh(ctx, count_heh = 5):
     await ctx.send("he" * count_heh)
 
-bot.run("nonono")
+bot.run("NonoNO")
