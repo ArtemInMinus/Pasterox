@@ -1,45 +1,54 @@
 import discord, random
+from discord.ext import commands
 
-from bot_logic import *
-
-# Переменная intents - хранит привилегии бота
 intents = discord.Intents.default()
-# Включаем привелегию на чтение сообщений
 intents.message_content = True
-# Создаем бота в переменной client и передаем все привелегии
-client = discord.Client(intents=intents)
 
-@client.event
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f'We have logged in as {bot.user}')
 
-@client.event
-async def on_message(message):
-    forty = random.randint(0, 2)
-    author = message.author
-    if message.author == client.user:
+@bot.command()
+async def test(ctx, arg):
+    await ctx.send(arg)
+
+@bot.command()
+async def add(ctx, left: int, right: int):
+    """Adds two numbers together."""
+    await ctx.send(left + right)
+
+@bot.command()
+async def roll(ctx, dice: str):
+    """Rolls a dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be in NdN!')
         return
-    if message.content.startswith('Привет'):
-        await message.channel.send("Дарова брат!")
-    elif message.content.startswith('Бот'):
-        await message.channel.send(":clown:")
-    elif message.content.startswith('!Когда ты родился'):
-        await message.channel.send(bot_info("DOB"))
-    elif message.content == 'пон':
-        await message.channel.send(str(author) + " непон")
-    elif message.content == 'Краш':
-        await message.channel.send(":hot_face:")
-    elif message.content == 'smile':
-        await message.channel.send(gen_emodji())
-    elif message.content.startswith('Пока'):
-        await message.channel.send(":saluting_face:")
-    elif forty == 0:
-        await message.channel.send(":skull:")
-    elif forty == 1:
-        pass
-    else:
-        await message.channel.send(message.content + "чо")
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(result)
+
+@bot.command()
+async def repeat(ctx, times: int, content='repeating...'):
+    """Repeats a message multiple times."""
+    for i in range(times):
+        await ctx.send(content)
 
 
+@bot.command()
+async def joined(ctx, member: discord.Member):
+    """Amazing!"""
+    await ctx.send(f'{member.name} joined {discord.utils.format_dt(member.joined_at)}')
 
-client.run("токен")
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Привет! Я бот {bot.user}!')
+
+@bot.command()
+async def heh(ctx, count_heh = 5):
+    await ctx.send("he" * count_heh)
+
+bot.run("nonono")
