@@ -1,10 +1,16 @@
-import discord, random
+import discord, random, os, requests
 from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix='$', intents=intents)
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
 
 @bot.event
 async def on_ready():
@@ -18,6 +24,29 @@ async def test(ctx, arg):
 async def add(ctx, left: int, right: int):
     """Adds two numbers together."""
     await ctx.send(left + right)
+
+@bot.command()
+async def fnaf(ctx):
+    freddy = random.choice(os.listdir("fnaf"))
+    with open(f"fnaf\{freddy}", 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file=picture)
+
+@bot.command('duck')
+async def duck(ctx):
+    '''По команде duck вызывает функцию get_duck_image_url'''
+    image_url = get_duck_image_url()
+    await ctx.send(image_url)
+
+
+@bot.command()
+async def mem(ctx):
+    mems = random.choice(os.listdir("images"))
+    with open(f"images\{mems}", 'rb') as f:
+        # В переменную кладем файл, который преобразуется в файл библиотеки Discord!
+        picture = discord.File(f)
+   # Можем передавать файл как параметр!
+    await ctx.send(file=picture)
 
 @bot.command()
 async def roll(ctx, dice: str):
@@ -54,4 +83,4 @@ async def helpme(ctx):
 async def heh(ctx, count_heh = 5):
     await ctx.send("he" * count_heh)
 
-bot.run("NonoNO")
+bot.run("no no listen listen")
